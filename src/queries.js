@@ -1,4 +1,4 @@
-const query = geneId => ({
+const illuminaDataQuery = geneId => ({
 	constraintLogic: 'A and B',
 	from: 'Gene',
 	select: [
@@ -31,7 +31,33 @@ const query = geneId => ({
 	]
 });
 
-const queryData = ({ geneId, serviceUrl, imjsClient = imjs }) => {
+const gTexDataQuery = geneId => ({
+	from: 'Gene',
+	select: [
+		'primaryIdentifier',
+		'symbol',
+		'rnaSeqResults.tissue',
+		'rnaSeqResults.expressionScore',
+		'rnaSeqResults.dataSets.name'
+	],
+	orderBy: [
+		{
+			path: 'rnaSeqResults.tissue',
+			direction: 'ASC'
+		}
+	],
+	where: [
+		{
+			path: 'Gene',
+			op: 'LOOKUP',
+			value: geneId,
+			extraValue: 'H. sapiens',
+			code: 'A'
+		}
+	]
+});
+
+const queryData = ({ query, geneId, serviceUrl, imjsClient = imjs }) => {
 	const service = new imjsClient.Service({
 		root: serviceUrl
 	});
@@ -46,4 +72,4 @@ const queryData = ({ geneId, serviceUrl, imjsClient = imjs }) => {
 	});
 };
 
-export { queryData };
+export { queryData, illuminaDataQuery, gTexDataQuery };
