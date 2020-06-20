@@ -98,7 +98,12 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							</span>
 							{illuminaData.length ? (
 								<>
-									<Heatmap tissueList={newTissue} graphData={newHeatmap} />
+									<Heatmap
+										tissueList={newTissue}
+										graphData={newHeatmap}
+										labelHeight={100}
+										graphHeight={illuminaData.length * 100 + 100}
+									/>
 									<FilterPanel
 										selectedTissue={filterTissue}
 										checkedCount={illuminaTissueCount}
