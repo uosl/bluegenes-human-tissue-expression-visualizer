@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Heatmap from './components/Heatmap';
-import { queryData, illuminaDataQuery, gTexDataQuery } from './queries';
+import { queryData, illuminaDataQuery } from './queries';
 
 const RootContainer = ({ serviceUrl, entity }) => {
 	const [illuminaData, setIlluminaData] = useState([]);
-	const [gTexData, setGTexData] = useState([]);
 	const [illuminaLoading, setIlluminaLoading] = useState(false);
-	const [gTexLoading, setGTexLoading] = useState(false);
 	const [illuminaTissueExpressionList, setIlluminaList] = useState([]);
 	const [illuminaTissueList, setIlluminaTissueList] = useState([]);
-	const [gTexTissueExpressionList, setGTexList] = useState([]);
-	const [gTexTissueList, setGTexTissueList] = useState([]);
+	const [illuminaTissueCount, setIlluminaTissueCount] = useState(0);
+	const [filterTissue, setFilter] = useState({});
+	const [newHeatmap, setNewHeatmap] = useState([]);
+	const [newTissue, setNewTissue] = useState([]);
 
 	useEffect(() => {
 		setIlluminaLoading(true);
-		setGTexLoading(true);
 		let { value } = entity;
 
 		queryData({
@@ -24,15 +23,6 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		}).then(data => {
 			setIlluminaData(data);
 			setIlluminaLoading(false);
-		});
-
-		queryData({
-			query: gTexDataQuery,
-			serviceUrl: serviceUrl,
-			geneId: !Array.isArray(value) ? [value] : value
-		}).then(data => {
-			setGTexData(data);
-			setGTexLoading(false);
 		});
 	}, []);
 
@@ -50,55 +40,37 @@ const RootContainer = ({ serviceUrl, entity }) => {
 			heatmapData.push(obj);
 		});
 		setIlluminaList(heatmapData);
+		setNewHeatmap(heatmapData);
+
+		setIlluminaTissueCount(tissueData.length);
+
 		setIlluminaTissueList(tissueData);
+		setNewTissue(tissueData);
+
+		initMapFromTissue(tissueData, true);
 	}, [illuminaData]);
 
-	useEffect(() => {
-		const heatmapData = [];
-		const tissueData = [];
-		gTexData.forEach(d => {
-			const obj = {};
-			obj[d.class] = d.symbol;
-			d.rnaSeqResults.forEach(a => {
-				if (tissueData.indexOf(a.tissue) === -1) tissueData.push(a.tissue);
-				obj[a.tissue] = a.expressionScore * 1;
-			});
-			heatmapData.push(obj);
-		});
-		setGTexList(heatmapData);
-		setGTexTissueList(tissueData);
-	}, [gTexData]);
+	const initMapFromTissue = (tissueData, checkedValue = true) => {
+		let tissueMap = {};
+		tissueData.forEach(p => (tissueMap = { ...tissueMap, [p]: checkedValue }));
+		setFilter(tissueMap);
+	};
 
 	return (
 		<div className="rootContainer">
 			<div className="innerContainer">
 				<div className="graph">
-					<span className="chart-title">Gene Tissue Network</span>
 					{illuminaLoading ? (
 						<h1>Loading...</h1>
 					) : (
 						<>
+							<span className="chart-title">
+								Gene Tissue Expression (illumina Body Map)
+							</span>
 							{illuminaData.length ? (
-								<Heatmap
-									tissueList={illuminaTissueList}
-									graphData={illuminaTissueExpressionList}
-									width={500}
-								/>
-							) : (
-								<h2>Data Not Found!</h2>
-							)}
-						</>
-					)}
-					{gTexLoading ? (
-						<h1>Loading...</h1>
-					) : (
-						<>
-							{gTexData.length ? (
-								<Heatmap
-									tissueList={gTexTissueList}
-									graphData={gTexTissueExpressionList}
-									width={4000}
-								/>
+								<>
+									<Heatmap tissueList={newTissue} graphData={newHeatmap} />
+								</>
 							) : (
 								<h2>Data Not Found!</h2>
 							)}
