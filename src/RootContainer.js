@@ -67,7 +67,23 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		setIlluminaTissueCount(count => (checked ? count + 1 : count - 1));
 	};
 
-	const filterGraph = () => {};
+	const filterGraph = () => {
+		let tempGraphData = [];
+		illuminaTissueExpressionList.forEach(i => tempGraphData.push({ ...i }));
+		let tissueList = [];
+		illuminaTissueList.forEach(i => tissueList.push(i));
+		tempGraphData.forEach(data => {
+			Object.keys(filterTissue).map(k => {
+				if (!filterTissue[k]) {
+					const i = tissueList.indexOf(k);
+					if (i > -1) tissueList.splice(i, 1);
+					delete data[k];
+				}
+			});
+			setNewHeatmap(tempGraphData);
+			setNewTissue(tissueList);
+		});
+	};
 
 	return (
 		<div className="rootContainer">
