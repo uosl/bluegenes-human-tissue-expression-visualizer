@@ -1,6 +1,11 @@
 import React from 'react';
 
-const FilterPanel = ({ selectedTissue, checkedCount }) => {
+const FilterPanel = ({
+	selectedTissue,
+	updateFilters,
+	filterGraph,
+	checkedCount
+}) => {
 	return (
 		<div className="filter-panel-root">
 			<div className="filter-panel-title">Available Tissues</div>
@@ -14,6 +19,7 @@ const FilterPanel = ({ selectedTissue, checkedCount }) => {
 										type="checkbox"
 										id={term}
 										value={term}
+										onChange={updateFilters}
 										checked={selectedTissue[term]}
 									/>
 									<label htmlFor={term}>{term}</label>
@@ -24,11 +30,12 @@ const FilterPanel = ({ selectedTissue, checkedCount }) => {
 				</div>
 			</div>
 			<div className="button-container">
-				<button type="button" className="filter-button">
+				<button type="button" className="filter-button" onClick={filterGraph}>
 					Filter ({checkedCount})
 				</button>
 			</div>
 		</div>
 	);
 };
+
 export default FilterPanel;

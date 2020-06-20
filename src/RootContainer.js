@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Heatmap from './components/Heatmap';
 import { queryData, illuminaDataQuery } from './queries';
+import FilterPanel from './components/FilterPanel';
 
 const RootContainer = ({ serviceUrl, entity }) => {
 	const [illuminaData, setIlluminaData] = useState([]);
@@ -56,6 +57,18 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		setFilter(tissueMap);
 	};
 
+	const updateFilters = ev => {
+		const { value, checked } = ev.target;
+
+		setFilter({
+			...filterTissue,
+			[value]: checked
+		});
+		setIlluminaTissueCount(count => (checked ? count + 1 : count - 1));
+	};
+
+	const filterGraph = () => {};
+
 	return (
 		<div className="rootContainer">
 			<div className="innerContainer">
@@ -70,6 +83,12 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							{illuminaData.length ? (
 								<>
 									<Heatmap tissueList={newTissue} graphData={newHeatmap} />
+									<FilterPanel
+										selectedTissue={filterTissue}
+										checkedCount={illuminaTissueCount}
+										updateFilters={updateFilters}
+										filterGraph={filterGraph}
+									/>
 								</>
 							) : (
 								<h2>Data Not Found!</h2>
