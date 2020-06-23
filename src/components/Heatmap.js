@@ -15,7 +15,7 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 		>
 			<HeatMap
 				data={graphData}
-				keys={tissueList}
+				keys={tissueList.map(t => t.value)}
 				colors={heatmap_colors}
 				indexBy="Gene"
 				margin={{ top: labelHeight, right: 60, bottom: 0, left: 60 }}
@@ -27,7 +27,7 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 					tickRotation: -90
 				}}
 				height={graphHeight}
-				width={tissueList.length * 50}
+				width={tissueList.length * 50 + 100}
 				axisRight={null}
 				axisBottom={null}
 				axisLeft={{

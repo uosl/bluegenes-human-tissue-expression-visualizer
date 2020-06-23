@@ -1,161 +1,124 @@
 import React, { useEffect, useState } from 'react';
 import Heatmap from './components/Heatmap';
-import { queryData, illuminaDataQuery, gTexDataQuery } from './queries';
+import { queryData, illuminaDataQuery } from './queries';
 import FilterPanel from './components/FilterPanel';
 
 const RootContainer = ({ serviceUrl, entity }) => {
 	const [illuminaData, setIlluminaData] = useState([]);
 	const [illuminaLoading, setIlluminaLoading] = useState(false);
-	const [illuminaTissueExpressionList, setIlluminaList] = useState([]);
+	const [illuminaHeatmapData, setIlluminaHeatmapData] = useState([]);
 	const [illuminaTissueList, setIlluminaTissueList] = useState([]);
-	const [illuminaTissueCount, setIlluminaTissueCount] = useState(0);
-	const [filterIlluminaTissue, setIlluminaFilter] = useState({});
-	const [newIlluminaHeatmap, setNewIlluminaHeatmap] = useState([]);
-	const [newIlluminaTissue, setNewIlluminaTissue] = useState([]);
+	const [heatmapTissueList, setHeatmapTissueList] = useState([]);
+	const [illuminaFilterHeatmapData, setIlluminaFilterHeatmapData] = useState(
+		[]
+	);
+	const [selectedTissue, setSelectedTissue] = useState([]);
 
-	const [gTexData, setGTexData] = useState([]);
-	const [gTexLoading, setGTexLoading] = useState(false);
-	const [gTexTissueExpressionList, setGTexList] = useState([]);
-	const [gTexTissueList, setGTexTissueList] = useState([]);
-	const [gTexTissueCount, setGTexTissueCount] = useState(0);
-	const [filterGTexTissue, setGTexFilter] = useState({});
-	const [newGTexHeatmap, setNewGTexHeatmap] = useState([]);
-	const [newGTexTissue, setNewGTexTissue] = useState([]);
+	// const [gTexData, setGTexData] = useState([]);
+	// const [gTexLoading, setGTexLoading] = useState(false);
+	// const [gTexTissueExpressionList, setGTexList] = useState([]);
+	// const [gTexTissueList, setGTexTissueList] = useState([]);
+	// const [gTexTissueCount, setGTexTissueCount] = useState(0);
+	// const [filterGTexTissue, setGTexFilter] = useState({});
+	// const [newGTexHeatmap, setNewGTexHeatmap] = useState([]);
+	// const [newGTexTissue, setNewGTexTissue] = useState([]);
 
 	useEffect(() => {
+		if (localStorage.getItem('illumina') && localStorage.getItem('gtex')) {
+			setIlluminaData(JSON.parse(localStorage.getItem('illumina')));
+			// setGTexData(JSON.parse(localStorage.getItem('gtex')));
+			return;
+		}
 		setIlluminaLoading(true);
-		setGTexLoading(true);
+		// setGTexLoading(true);
 		let { value } = entity;
 
 		queryData({
 			query: illuminaDataQuery,
 			serviceUrl: serviceUrl,
 			geneId: !Array.isArray(value) ? [value] : value
-		})
-			.then(data => {
-				setIlluminaData(data);
-				setIlluminaLoading(false);
-			})
-			.then(() => {
-				queryData({
-					query: gTexDataQuery,
-					serviceUrl: serviceUrl,
-					geneId: !Array.isArray(value) ? [value] : value
-				}).then(data => {
-					setGTexData(data);
-					setGTexLoading(false);
-				});
-			});
+		}).then(data => {
+			setIlluminaData(data);
+			localStorage.setItem('illumina', JSON.stringify(data));
+			setIlluminaLoading(false);
+		});
+		// .then(() => {
+		// 	queryData({
+		// 		query: gTexDataQuery,
+		// 		serviceUrl: serviceUrl,
+		// 		geneId: !Array.isArray(value) ? [value] : value
+		// 	}).then(data => {
+		// 		setGTexData(data);
+		// 		localStorage.setItem('gtex', JSON.stringify(data));
+
+		// 		setGTexLoading(false);
+		// 	});
+		// });
 	}, []);
 
 	useEffect(() => {
 		const heatmapData = [];
-		const tissueData = [];
-		illuminaData.forEach(d => {
-			const obj = {};
-			obj[d.class] = d.symbol;
-			d.atlasExpression.forEach(a => {
-				if (tissueData.indexOf(a.condition) === -1)
-					tissueData.push(a.condition);
-				obj[a.condition] = a.expression * 1;
+		const tissueList = [];
+		illuminaData.forEach(data => {
+			const graphObj = {};
+			graphObj[data.class] = data.symbol;
+			data.atlasExpression.forEach(tissue => {
+				const { condition, expression } = tissue;
+				if (tissueList.filter(t => t.value == condition).length == 0)
+					tissueList.push({ label: condition, value: condition });
+				graphObj[condition] = expression * 1;
 			});
-			heatmapData.push(obj);
+			heatmapData.push(graphObj);
 		});
-		setIlluminaList(heatmapData);
-		setNewIlluminaHeatmap(heatmapData);
 
-		setIlluminaTissueCount(tissueData.length);
-
-		setIlluminaTissueList(tissueData);
-		setNewIlluminaTissue(tissueData);
-
-		initMapFromTissue(tissueData, true, 1);
+		setIlluminaTissueList(tissueList);
+		setHeatmapTissueList(tissueList);
+		setIlluminaHeatmapData(heatmapData);
+		setIlluminaFilterHeatmapData(heatmapData);
 	}, [illuminaData]);
 
-	useEffect(() => {
-		const heatmapData = [];
-		const tissueData = [];
-		gTexData.forEach(d => {
-			const obj = {};
-			obj[d.class] = d.symbol;
-			d.rnaSeqResults.forEach(a => {
-				if (tissueData.indexOf(a.tissue) === -1) tissueData.push(a.tissue);
-				obj[a.tissue] = a.expressionScore * 1;
-			});
-			heatmapData.push(obj);
-		});
-		setGTexList(heatmapData);
-		setNewGTexHeatmap(heatmapData);
+	// useEffect(() => {
+	// 	const heatmapData = [];
+	// 	const tissueList = [];
+	// 	gTexData.forEach(d => {
+	// 		const obj = {};
+	// 		obj[d.class] = d.symbol;
+	// 		d.rnaSeqResults.forEach(a => {
+	// 			if (tissueList.indexOf(a.tissue) === -1) tissueList.push(a.tissue);
+	// 			obj[a.tissue] = a.expressionScore * 1;
+	// 		});
+	// 		heatmapData.push(obj);
+	// 	});
+	// 	setGTexList(heatmapData);
+	// 	setNewGTexHeatmap(heatmapData);
 
-		setGTexTissueCount(tissueData.length);
+	// 	setGTexTissueCount(tissueList.length);
 
-		setGTexTissueList(tissueData);
-		setNewGTexTissue(tissueData);
+	// 	setGTexTissueList(tissueList);
+	// 	setNewGTexTissue(tissueList);
 
-		initMapFromTissue(tissueData, true, 2);
-	}, [gTexData]);
+	// 	// initMapFromTissue(tissueData, true, 2);
+	// }, [gTexData]);
 
-	const initMapFromTissue = (tissueData, checkedValue = true, dataType) => {
-		let tissueMap = {};
-		tissueData.forEach(p => (tissueMap = { ...tissueMap, [p]: checkedValue }));
-		if (dataType == 1) setIlluminaFilter(tissueMap);
-		if (dataType == 2) setGTexFilter(tissueMap);
-	};
-
-	const updateFilters = ev => {
-		const { value, checked } = ev.target;
-
-		setIlluminaFilter({
-			...filterIlluminaTissue,
-			[value]: checked
-		});
-		setIlluminaTissueCount(count => (checked ? count + 1 : count - 1));
+	const updateFilter = value => {
+		setSelectedTissue(value);
 	};
 
 	const filterGraph = () => {
-		let tempGraphData = [];
-		illuminaTissueExpressionList.forEach(i => tempGraphData.push({ ...i }));
-		let tissueList = [];
-		illuminaTissueList.forEach(i => tissueList.push(i));
-		tempGraphData.forEach(data => {
-			Object.keys(filterIlluminaTissue).map(k => {
-				if (!filterIlluminaTissue[k]) {
-					const i = tissueList.indexOf(k);
-					if (i > -1) tissueList.splice(i, 1);
-					delete data[k];
+		const tempGraphData = [];
+
+		illuminaFilterHeatmapData.forEach(data => {
+			const graphObj = {};
+			graphObj['Gene'] = data.Gene;
+			Object.keys(data).map(item => {
+				if (selectedTissue.filter(tissue => tissue.value == item).length > 0) {
+					graphObj[item] = data[item];
 				}
 			});
-			setNewIlluminaHeatmap(tempGraphData);
-			setNewIlluminaTissue(tissueList);
+			tempGraphData.push(graphObj);
 		});
-	};
-
-	const updateGTexFilters = ev => {
-		const { value, checked } = ev.target;
-
-		setGTexFilter({
-			...filterGTexTissue,
-			[value]: checked
-		});
-		setGTexTissueCount(count => (checked ? count + 1 : count - 1));
-	};
-
-	const filterGTexGraph = () => {
-		let tempGraphData = [];
-		gTexTissueExpressionList.forEach(i => tempGraphData.push({ ...i }));
-		let tissueList = [];
-		gTexTissueList.forEach(i => tissueList.push(i));
-		tempGraphData.forEach(data => {
-			Object.keys(filterGTexTissue).map(k => {
-				if (!filterGTexTissue[k]) {
-					const i = tissueList.indexOf(k);
-					if (i > -1) tissueList.splice(i, 1);
-					delete data[k];
-				}
-			});
-			setNewGTexHeatmap(tempGraphData);
-			setNewGTexTissue(tissueList);
-		});
+		setHeatmapTissueList([...selectedTissue]);
+		setIlluminaHeatmapData(tempGraphData);
 	};
 
 	return (
@@ -169,19 +132,18 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							<span className="chart-title">
 								Gene Tissue Expression (illumina Body Map)
 							</span>
-							{illuminaData.length ? (
+							{illuminaHeatmapData.length ? (
 								<>
 									<Heatmap
-										tissueList={newIlluminaTissue}
-										graphData={newIlluminaHeatmap}
+										tissueList={heatmapTissueList}
+										graphData={illuminaHeatmapData}
 										labelHeight={100}
 										graphHeight={illuminaData.length * 100 + 100}
 									/>
 									<FilterPanel
-										selectedTissue={filterIlluminaTissue}
-										checkedCount={illuminaTissueCount}
-										updateFilters={updateFilters}
+										tissueList={illuminaTissueList}
 										filterGraph={filterGraph}
+										updateFilter={updateFilter}
 									/>
 								</>
 							) : (
@@ -189,7 +151,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							)}
 						</>
 					)}
-					{gTexLoading ? (
+					{/* {gTexLoading ? (
 						<h1>Loading...</h1>
 					) : (
 						<>
@@ -213,7 +175,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								<h2>Data Not Found!</h2>
 							)}
 						</>
-					)}
+					)} */}
 				</div>
 			</div>
 		</div>
