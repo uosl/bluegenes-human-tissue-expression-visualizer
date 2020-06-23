@@ -38,7 +38,9 @@
   "dependencies": {
     "@nivo/heatmap": "^0.62.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-dropdown-select": "^4.4.2",
+    "react-select": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
