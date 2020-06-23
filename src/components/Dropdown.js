@@ -16,7 +16,7 @@ const Dropdown = ({ options, updateFilter }) => {
 			<div>
 				<SearchAndToggle color={props.color}>
 					<Buttons>
-						<div>Search and select:</div>
+						<div>Tissue List:</div>
 						{methods.areAllSelected() ? (
 							<Button className="clear" onClick={methods.clearAll}>
 								Clear all
@@ -29,7 +29,7 @@ const Dropdown = ({ options, updateFilter }) => {
 						type="text"
 						value={state.search}
 						onChange={methods.setSearch}
-						placeholder="Type any tissue name here"
+						placeholder="Search any tissue name here"
 					/>
 				</SearchAndToggle>
 				<Items>
@@ -121,7 +121,7 @@ const Buttons = styled.div`
 
 	& div {
 		margin: 10px 0 0 10px;
-		font-weight: 600;
+		font-weight: 400;
 	}
 `;
 
