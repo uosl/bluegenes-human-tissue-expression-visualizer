@@ -1,37 +1,24 @@
 import React from 'react';
+import Dropdown from './Dropdown';
 
-const FilterPanel = ({
-	selectedTissue,
-	updateFilters,
-	filterGraph,
-	checkedCount
-}) => {
+const FilterPanel = ({ tissueList, filterGraph, updateFilter }) => {
 	return (
 		<div className="filter-panel-root">
-			<div className="filter-panel-title">Available Tissues</div>
+			<div className="filter-panel-title">Filter Panel</div>
 			<div className="filter-panel">
 				<div className="filter-container">
-					{Object.keys(selectedTissue).map(term => (
-						<>
-							<div className="option">
-								<div>
-									<input
-										type="checkbox"
-										id={term}
-										value={term}
-										onChange={updateFilters}
-										checked={selectedTissue[term]}
-									/>
-									<label htmlFor={term}>{term}</label>
-								</div>
-							</div>
-						</>
-					))}
+					<div className="tissue-filter">
+						Tissues
+						<div className="dropdown">
+							<Dropdown options={tissueList} updateFilter={updateFilter} />
+						</div>
+					</div>
+					<div>Expression score</div>
 				</div>
 			</div>
 			<div className="button-container">
 				<button type="button" className="filter-button" onClick={filterGraph}>
-					Filter ({checkedCount})
+					Filter
 				</button>
 			</div>
 		</div>

@@ -34,25 +34,39 @@
 
           .filter-panel-title {
             margin-top: 20px;
-            font-weight: 300;
             font-size: 20px;
             font-family: sans-serif;
             text-align: center;
           }
 
           .filter-panel {
-            padding: 10px;
+            padding: 30px;
 
             .filter-container {
               display: flex;
-              flex-wrap: wrap;
-              .option {
-                margin-left: 20px;
-                margin-bottom: 10px;
-                input {
-                  margin-right: 6px
+              text-align: left;
+              font-size: 16px;
+              font-weight: 300;
+              font-family: sans-serif;
+              .tissue-filter {
+                width: 70%;
+                margin-right: 20px;
+                .dropdown {
+                  margin: 10px 20px 0 0;
                 }
               }
+            }
+          }
+          .button-container {
+            button {
+              background-color: rgb(85, 137, 233);
+              border: none;
+              color: white;
+              padding: 12px 45px;
+              text-align: center;
+              font-size: 16px;
+              border-radius: 5px;
+              margin-bottom: 20px;
             }
           }
         }
