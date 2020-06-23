@@ -132,7 +132,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							<span className="chart-title">
 								Gene Tissue Expression (illumina Body Map)
 							</span>
-							{illuminaHeatmapData.length ? (
+							{illuminaData.length ? (
 								<>
 									<Heatmap
 										tissueList={heatmapTissueList}
