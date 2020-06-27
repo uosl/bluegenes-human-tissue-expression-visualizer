@@ -9,10 +9,9 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const [illuminaHeatmapData, setIlluminaHeatmapData] = useState([]);
 	const [illuminaTissueList, setIlluminaTissueList] = useState([]);
 	const [heatmapTissueList, setHeatmapTissueList] = useState([]);
-	const [illuminaFilterHeatmapData, setIlluminaFilterHeatmapData] = useState(
-		[]
-	);
+	const [illuminaFilterHeatmap, setIlluminaFilterHeatmap] = useState([]);
 	const [selectedTissue, setSelectedTissue] = useState([]);
+	const [selectedExpression, setSelectedExpression] = useState('Low');
 
 	// const [gTexData, setGTexData] = useState([]);
 	// const [gTexLoading, setGTexLoading] = useState(false);
@@ -24,22 +23,15 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	// const [newGTexTissue, setNewGTexTissue] = useState([]);
 
 	useEffect(() => {
-		if (localStorage.getItem('illumina') && localStorage.getItem('gtex')) {
-			setIlluminaData(JSON.parse(localStorage.getItem('illumina')));
-			// setGTexData(JSON.parse(localStorage.getItem('gtex')));
-			return;
-		}
 		setIlluminaLoading(true);
 		// setGTexLoading(true);
 		let { value } = entity;
-
 		queryData({
 			query: illuminaDataQuery,
 			serviceUrl: serviceUrl,
 			geneId: !Array.isArray(value) ? [value] : value
 		}).then(data => {
 			setIlluminaData(data);
-			localStorage.setItem('illumina', JSON.stringify(data));
 			setIlluminaLoading(false);
 		});
 		// .then(() => {
@@ -74,8 +66,22 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		setIlluminaTissueList(tissueList);
 		setHeatmapTissueList(tissueList);
 		setIlluminaHeatmapData(heatmapData);
-		setIlluminaFilterHeatmapData(heatmapData);
+		setIlluminaFilterHeatmap(heatmapData);
 	}, [illuminaData]);
+
+	// useEffect(() => {
+	// 	console.log(illuminaFilterHeatmap);
+	// 	const low = [], medium = [], high = [];
+	// 	illuminaFilterHeatmap.forEach(tissue => {
+	// 		const obj = {};
+	// 		Object.keys(tissue).map((item) => {
+	// 			if(tissue[item] <= 10 || item == 'Gene') obj[item] = tissue[item];
+	// 		});
+	// 		low.push(obj);
+	// 	});
+	// 	console.log(low);
+	// 	setIlluminaHeatmapData(low);
+	// }, [illuminaFilterHeatmap]);
 
 	// useEffect(() => {
 	// 	const heatmapData = [];
@@ -107,7 +113,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const filterGraph = () => {
 		const tempGraphData = [];
 
-		illuminaFilterHeatmapData.forEach(data => {
+		illuminaFilterHeatmap.forEach(data => {
 			const graphObj = {};
 			graphObj['Gene'] = data.Gene;
 			Object.keys(data).map(item => {
@@ -144,6 +150,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 										tissueList={illuminaTissueList}
 										filterGraph={filterGraph}
 										updateFilter={updateFilter}
+										selectedExpression={selectedExpression}
+										applyFilter={e => setSelectedExpression(e.target.value)}
 									/>
 								</>
 							) : (

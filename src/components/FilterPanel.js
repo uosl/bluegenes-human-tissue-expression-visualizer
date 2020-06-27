@@ -2,8 +2,13 @@ import React from 'react';
 import Dropdown from './Dropdown';
 
 const moreOptions = ['High', 'Medium', 'Low'];
-const FilterPanel = ({ tissueList, filterGraph, updateFilter }) => {
-	const selectedInteraction = 'Low';
+const FilterPanel = ({
+	tissueList,
+	filterGraph,
+	updateFilter,
+	applyFilter,
+	selectedExpression
+}) => {
 	return (
 		<div className="filter-panel-root">
 			<div className="filter-panel-title">Filter Panel</div>
@@ -21,7 +26,7 @@ const FilterPanel = ({ tissueList, filterGraph, updateFilter }) => {
 							{moreOptions.map(term => (
 								<div
 									className={
-										selectedInteraction === term
+										selectedExpression === term
 											? 'option selected'
 											: 'option not-selected'
 									}
@@ -31,8 +36,8 @@ const FilterPanel = ({ tissueList, filterGraph, updateFilter }) => {
 										type="radio"
 										id={term}
 										value={term}
-										// onChange={applyFilter}
-										checked={selectedInteraction === term}
+										onChange={applyFilter}
+										checked={selectedExpression === term}
 									/>
 									<label htmlFor={term}>{term}</label>
 								</div>
