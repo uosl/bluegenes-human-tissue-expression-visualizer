@@ -9,6 +9,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const [dataAccToLevel, setDataAccToLevel] = useState([]);
 	const [tissueList, setTissueList] = useState([]);
 	const [heatmapData, setHeatmapData] = useState([]);
+	const [heatmapTissueList, setHeatmapTissueList] = useState([]);
 	const [selectedTissue, setSelectedTissue] = useState([]);
 	const [selectedExpression, setSelectedExpression] = useState({});
 	const expressionLevel = ['Low', 'Medium', 'High'];
@@ -53,23 +54,15 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		});
 		setDataAccToLevel(expressionLevelData);
 		setTissueList(tissueList);
+		setSelectedTissue(tissueList);
+		setHeatmapTissueList(tissueList);
 		initExpressionLevel(true);
 	}, [data]);
 
 	useEffect(() => {
-		// on toggle of expression level -> merge the data of those level whose value is true
-		// suppose the state is - low: true, medium: true and low: [{gene: ADH5, gland: 3}], medium: [{gene: ADH5, testis: 21}]
-		// formatted data after merging them - [{gene: ADH5, gland: 3, testis: 21}]
-		const obj = {};
-		Object.keys(selectedExpression).map(level => {
-			if (dataAccToLevel[level] !== undefined && selectedExpression[level]) {
-				Object.values(dataAccToLevel[level]).map(d => {
-					obj[d.Gene] = { ...obj[d.Gene], ...d };
-				});
-			}
-		});
-		setHeatmapData([...Object.values(obj)]);
-	}, [selectedExpression]);
+		// initially merging data of all selected expression level to send it to heatmap
+		formatDataAccordingToLevel();
+	}, [dataAccToLevel]);
 
 	const checkLevel = (level, val) => {
 		if (level == 'Low') return val <= 10;
@@ -95,7 +88,30 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		});
 	};
 
-	const filterGraph = () => {};
+	const formatDataAccordingToLevel = () => {
+		// merge the data of those level whose value is true and is selected tissue in the filter panel
+		// suppose the state is - low: true, medium: true and low: [{gene: ADH5, gland: 3}], medium: [{gene: ADH5, testis: 21}]
+		// formatted data after merging them - [{gene: ADH5, gland: 3, testis: 21}]
+		const obj = {};
+		Object.keys(selectedExpression).map(level => {
+			if (dataAccToLevel[level] !== undefined && selectedExpression[level]) {
+				Object.values(dataAccToLevel[level]).map(d => {
+					Object.keys(d).map(e => {
+						const x = selectedTissue.find(w => w.value == e);
+						if (x !== undefined || e === 'Gene') {
+							obj[d.Gene] = { ...obj[d.Gene], [e]: d[e] };
+						}
+					});
+				});
+			}
+		});
+		setHeatmapData([...Object.values(obj)]);
+	};
+
+	const filterGraph = () => {
+		setHeatmapTissueList(selectedTissue);
+		formatDataAccordingToLevel();
+	};
 
 	return (
 		<div className="rootContainer">
@@ -112,7 +128,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							</span>
 							{heatmapData.length ? (
 								<Heatmap
-									tissueList={tissueList}
+									tissueList={heatmapTissueList}
 									graphData={heatmapData}
 									labelHeight={100}
 									graphHeight={heatmapData.length * 100 + 100}
