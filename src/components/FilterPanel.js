@@ -1,12 +1,11 @@
 import React from 'react';
 import Dropdown from './Dropdown';
 
-const moreOptions = ['High', 'Medium', 'Low'];
 const FilterPanel = ({
 	tissueList,
 	filterGraph,
 	updateFilter,
-	applyFilter,
+	expressionLevelFilter,
 	selectedExpression
 }) => {
 	return (
@@ -23,21 +22,21 @@ const FilterPanel = ({
 					<div className="expression-filter">
 						Expression score
 						<div className="filter-option">
-							{moreOptions.map(term => (
+							{Object.keys(selectedExpression).map(term => (
 								<div
 									className={
-										selectedExpression === term
+										selectedExpression[term]
 											? 'option selected'
 											: 'option not-selected'
 									}
 									key={term}
 								>
 									<input
-										type="radio"
+										type="checkbox"
 										id={term}
 										value={term}
-										onChange={applyFilter}
-										checked={selectedExpression === term}
+										onChange={expressionLevelFilter}
+										checked={selectedExpression[term]}
 									/>
 									<label htmlFor={term}>{term}</label>
 								</div>
