@@ -6,7 +6,9 @@ const FilterPanel = ({
 	filterGraph,
 	updateFilter,
 	expressionLevelFilter,
-	selectedExpression
+	selectedExpression,
+	selectedScale,
+	scaleFilter
 }) => {
 	return (
 		<div className="filter-panel-root">
@@ -37,6 +39,30 @@ const FilterPanel = ({
 										value={term}
 										onChange={expressionLevelFilter}
 										checked={selectedExpression[term]}
+									/>
+									<label htmlFor={term}>{term}</label>
+								</div>
+							))}
+						</div>
+					</div>
+					<div className="scale-filter">
+						Scale
+						<div className="filter-option">
+							{['Linear Scale', 'Logarithmic Scale'].map(term => (
+								<div
+									className={
+										selectedScale === term
+											? 'option selected'
+											: 'option not-selected'
+									}
+									key={term}
+								>
+									<input
+										type="radio"
+										id={term}
+										value={term}
+										onChange={scaleFilter}
+										checked={selectedScale === term}
 									/>
 									<label htmlFor={term}>{term}</label>
 								</div>

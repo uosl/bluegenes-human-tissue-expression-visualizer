@@ -12,6 +12,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const [heatmapTissueList, setHeatmapTissueList] = useState([]);
 	const [selectedTissue, setSelectedTissue] = useState([]);
 	const [selectedExpression, setSelectedExpression] = useState({});
+	const [selectedScale, changeScale] = useState('Linear Scale');
 	const expressionLevel = ['Low', 'Medium', 'High'];
 
 	useEffect(() => {
@@ -61,7 +62,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 
 	useEffect(() => {
 		// initially merging data of all selected expression level to send it to heatmap
-		formatDataAccordingToLevel();
+		formatDataAccToSelectedLevel();
 	}, [dataAccToLevel]);
 
 	const checkLevel = (level, val) => {
@@ -88,18 +89,24 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		});
 	};
 
-	const formatDataAccordingToLevel = () => {
+	const formatDataAccToSelectedLevel = () => {
 		// merge the data of those level whose value is true and is selected tissue in the filter panel
 		// suppose the state is - low: true, medium: true and low: [{gene: ADH5, gland: 3}], medium: [{gene: ADH5, testis: 21}]
 		// formatted data after merging them - [{gene: ADH5, gland: 3, testis: 21}]
 		const obj = {};
 		Object.keys(selectedExpression).map(level => {
 			if (dataAccToLevel[level] !== undefined && selectedExpression[level]) {
-				Object.values(dataAccToLevel[level]).map(d => {
-					Object.keys(d).map(e => {
-						const x = selectedTissue.find(w => w.value == e);
-						if (x !== undefined || e === 'Gene') {
-							obj[d.Gene] = { ...obj[d.Gene], [e]: d[e] };
+				Object.values(dataAccToLevel[level]).map(data => {
+					Object.keys(data).map(tissue => {
+						const found = selectedTissue.find(t => t.value == tissue);
+						if (found !== undefined || tissue === 'Gene') {
+							if (tissue !== 'Gene' && selectedScale === 'Logarithmic Scale') {
+								obj[data.Gene] = {
+									...obj[data.Gene],
+									[tissue]: Math.log10(data[tissue]).toFixed(2)
+								};
+							} else
+								obj[data.Gene] = { ...obj[data.Gene], [tissue]: data[tissue] };
 						}
 					});
 				});
@@ -110,7 +117,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 
 	const filterGraph = () => {
 		setHeatmapTissueList(selectedTissue);
-		formatDataAccordingToLevel();
+		formatDataAccToSelectedLevel();
 	};
 
 	return (
@@ -134,7 +141,9 @@ const RootContainer = ({ serviceUrl, entity }) => {
 									graphHeight={heatmapData.length * 100 + 100}
 								/>
 							) : (
-								<div className="noTissue">Data Not Found!</div>
+								<div className="noTissue">
+									Data Not Found! Please Update The Filter.
+								</div>
 							)}
 							<FilterPanel
 								tissueList={tissueList}
@@ -142,6 +151,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								updateFilter={value => setSelectedTissue(value)}
 								selectedExpression={selectedExpression}
 								expressionLevelFilter={expressionLevelFilter}
+								selectedScale={selectedScale}
+								scaleFilter={e => changeScale(e.target.value)}
 							/>
 						</div>
 					)}
