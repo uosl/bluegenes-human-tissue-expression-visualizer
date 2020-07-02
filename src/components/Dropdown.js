@@ -65,6 +65,7 @@ const Dropdown = ({ options, updateFilter }) => {
 			<StyledSelect
 				placeholder="Select"
 				multi
+				dropdownPosition="auto"
 				contentRenderer={customContentRenderer}
 				dropdownRenderer={customDropdownRenderer}
 				onChange={value => updateFilter(value)}
