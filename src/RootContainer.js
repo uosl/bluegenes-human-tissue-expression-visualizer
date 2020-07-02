@@ -52,7 +52,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								tissueList.push({ label: condition, value: condition });
 							// multiplied by 1 to convert string to number and then checking its expression level
 							if (checkLevel(level, expression * 1))
-								obj[condition] = expression * 1;
+								obj[condition] = (expression * 1).toFixed(2);
 						});
 				} else {
 					d &&
@@ -61,9 +61,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							const { tissue, expressionScore } = res;
 							if (tissueList.filter(t => t.value == tissue).length == 0)
 								tissueList.push({ label: tissue, value: tissue });
-							// multiplied by 1 to convert string to number and then checking its expressionScore level
 							if (checkLevel(level, expressionScore))
-								obj[tissue] = expressionScore;
+								obj[tissue] = expressionScore.toFixed(2);
 						});
 				}
 				levelData.push(obj);
