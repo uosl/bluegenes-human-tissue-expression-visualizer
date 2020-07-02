@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Heatmap from './components/Heatmap';
-import { queryData, illuminaDataQuery } from './queries';
+import { queryData, illuminaDataQuery, gTexDataQuery } from './queries';
 import FilterPanel from './components/FilterPanel';
 
 const RootContainer = ({ serviceUrl, entity }) => {
@@ -13,25 +13,27 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const [selectedTissue, setSelectedTissue] = useState([]);
 	const [selectedExpression, setSelectedExpression] = useState({});
 	const [selectedScale, changeScale] = useState('Linear Scale');
+	const [selectedDataSet, changeDataSet] = useState('GTex Data');
 	const expressionLevel = ['Low', 'Medium', 'High'];
 
 	useEffect(() => {
 		setLoading(true);
 		let { value } = entity;
 		queryData({
-			query: illuminaDataQuery,
+			// conditionally querying data based on the selected dataset
+			query: selectedDataSet == 'GTex Data' ? gTexDataQuery : illuminaDataQuery,
 			serviceUrl: serviceUrl,
 			geneId: !Array.isArray(value) ? [value] : value
 		}).then(data => {
 			setData(data);
 			setLoading(false);
 		});
-	}, []);
+	}, [selectedDataSet]);
 
 	useEffect(() => {
 		const expressionLevelData = {};
 		const tissueList = [];
-		// For every level iterating data received from the query and putting them
+		// For every level iterating data based on selected dataset received from the query and putting them
 		// according to its expression level - low, medium, high. Also, filtering out
 		// the tissue list that will be used passed to the filterpanel and heatmap as prop
 		Object.keys(selectedExpression).map(level => {
@@ -41,14 +43,29 @@ const RootContainer = ({ serviceUrl, entity }) => {
 			data.forEach(d => {
 				const obj = {};
 				obj[d.class] = d.symbol;
-				d.atlasExpression.forEach(tissue => {
-					const { condition, expression } = tissue;
-					if (tissueList.filter(t => t.value == condition).length == 0)
-						tissueList.push({ label: condition, value: condition });
-					// multiplied by 1 to convert string to number and then checking its expression level
-					if (checkLevel(level, expression * 1))
-						obj[condition] = expression * 1;
-				});
+				if (selectedDataSet == 'illumina Body Map') {
+					d &&
+						d.atlasExpression &&
+						d.atlasExpression.forEach(tissue => {
+							const { condition, expression } = tissue;
+							if (tissueList.filter(t => t.value == condition).length == 0)
+								tissueList.push({ label: condition, value: condition });
+							// multiplied by 1 to convert string to number and then checking its expression level
+							if (checkLevel(level, expression * 1))
+								obj[condition] = expression * 1;
+						});
+				} else {
+					d &&
+						d.rnaSeqResults &&
+						d.rnaSeqResults.forEach(res => {
+							const { tissue, expressionScore } = res;
+							if (tissueList.filter(t => t.value == tissue).length == 0)
+								tissueList.push({ label: tissue, value: tissue });
+							// multiplied by 1 to convert string to number and then checking its expressionScore level
+							if (checkLevel(level, expressionScore))
+								obj[tissue] = expressionScore;
+						});
+				}
 				levelData.push(obj);
 			});
 			expressionLevelData[level] = levelData;
@@ -67,7 +84,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 
 	const checkLevel = (level, val) => {
 		if (level == 'Low') return val <= 10;
-		if (level == 'Medium') return val >= 11 && val <= 1000;
+		if (level == 'Medium') return val > 10 && val <= 1000;
 		if (level == 'High') return val > 1000;
 	};
 
@@ -89,6 +106,16 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		});
 	};
 
+	const checkDataset = () => {
+		return selectedDataSet === 'illumina Body Map'
+			? 'GTex Data'
+			: 'illumina Body Map';
+	};
+
+	const getValAccToDataset = () => {
+		return selectedDataSet === 'illumina Body Map' ? 100 : 200;
+	};
+
 	const formatDataAccToSelectedLevel = () => {
 		// merge the data of those level whose value is true and is selected tissue in the filter panel
 		// suppose the state is - low: true, medium: true and low: [{gene: ADH5, gland: 3}], medium: [{gene: ADH5, testis: 21}]
@@ -103,7 +130,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							if (tissue !== 'Gene' && selectedScale === 'Logarithmic Scale') {
 								obj[data.Gene] = {
 									...obj[data.Gene],
-									[tissue]: Math.log10(data[tissue]).toFixed(2)
+									[tissue]:
+										data[tissue] == 0 ? 0 : Math.log10(data[tissue]).toFixed(2)
 								};
 							} else
 								obj[data.Gene] = { ...obj[data.Gene], [tissue]: data[tissue] };
@@ -131,14 +159,20 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							style={{ width: !heatmapData.length ? 'calc(100vw - 5rem)' : '' }}
 						>
 							<span className="chart-title">
-								Gene Tissue Expression (illumina Body Map)
+								Gene Tissue Expression ({selectedDataSet})
 							</span>
+							<div
+								className="tabs"
+								onClick={() => changeDataSet(checkDataset())}
+							>
+								{checkDataset()}
+							</div>
 							{heatmapData.length ? (
 								<Heatmap
 									tissueList={heatmapTissueList}
 									graphData={heatmapData}
-									labelHeight={100}
-									graphHeight={heatmapData.length * 100 + 100}
+									labelHeight={getValAccToDataset()}
+									graphHeight={heatmapData.length * 100 + getValAccToDataset()}
 								/>
 							) : (
 								<div className="noTissue">
