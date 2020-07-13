@@ -91,7 +91,7 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 										}}
 										fillOpacity={opacity}
 									>
-										{!value ? 'NA' : value}
+										{isNaN(value) ? 'NA' : value}
 									</text>
 								)}
 							</g>
