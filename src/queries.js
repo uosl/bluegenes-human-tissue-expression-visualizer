@@ -57,6 +57,33 @@ const gTexDataQuery = geneId => ({
 	]
 });
 
+const RNASeqQuery = geneId => ({
+	constraintLogic: 'A and B',
+	from: 'Gene',
+	select: [
+		'primaryIdentifier',
+		'symbol',
+		'rnaSeqResults.tissue',
+		'rnaSeqResults.expressionScore',
+		'rnaSeqResults.dataSets.name'
+	],
+	where: [
+		{
+			path: 'Gene.rnaSeqResults.dataSets.name',
+			code: 'B',
+			op: '=',
+			value: 'Protein Atlas RNA Gene data'
+		},
+		{
+			path: 'Gene',
+			code: 'A',
+			op: 'LOOKUP',
+			value: geneId,
+			extraValue: 'H. sapiens'
+		}
+	]
+});
+
 const queryData = ({ query, geneId, serviceUrl, imjsClient = imjs }) => {
 	const service = new imjsClient.Service({
 		root: serviceUrl
@@ -72,4 +99,4 @@ const queryData = ({ query, geneId, serviceUrl, imjsClient = imjs }) => {
 	});
 };
 
-export { queryData, illuminaDataQuery, gTexDataQuery };
+export { queryData, illuminaDataQuery, gTexDataQuery, RNASeqQuery };
