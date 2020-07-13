@@ -42,6 +42,61 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 					labelTextColor="rgb(51, 51, 51)"
 					cellHoverOthersOpacity={1}
 					cellOpacity={1}
+					nanColor="#fff"
+					cellShape={({
+						data,
+						value,
+						x,
+						y,
+						width,
+						height,
+						color,
+						opacity,
+						borderWidth,
+						borderColor,
+						enableLabel,
+						textColor,
+						onHover,
+						onLeave,
+						onClick,
+						theme
+					}) => {
+						return (
+							<g
+								transform={`translate(${x}, ${y})`}
+								onMouseEnter={onHover}
+								onMouseMove={onHover}
+								onMouseLeave={onLeave}
+								onClick={e => onClick(data, e)}
+								style={{ cursor: 'pointer' }}
+							>
+								<rect
+									x={width * -0.5}
+									y={height * -0.5}
+									width={width}
+									height={height}
+									fill={color}
+									fillOpacity={opacity}
+									strokeWidth={borderWidth}
+									stroke={borderColor}
+									strokeOpacity={opacity}
+								/>
+								{enableLabel && (
+									<text
+										alignmentBaseline="central"
+										textAnchor="middle"
+										style={{
+											...theme.labels.text,
+											fill: textColor
+										}}
+										fillOpacity={opacity}
+									>
+										{!value ? 'NA' : value}
+									</text>
+								)}
+							</g>
+						);
+					}}
 				/>
 			) : (
 				<div className="noTissue">Please Select Any Tissue</div>
