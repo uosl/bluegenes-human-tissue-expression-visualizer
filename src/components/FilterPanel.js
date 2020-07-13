@@ -56,7 +56,7 @@ const FilterPanel = ({
 					<div className="data-set-filter">
 						Data Set
 						<div className="filter-option">
-							{['GTex Data', 'illumina Body Map'].map(term => (
+							{['GTex Data', 'RNA Seq Data', 'illumina Body Map'].map(term => (
 								<div
 									className={
 										selectedDataSet == term
