@@ -38,6 +38,8 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 						tickRotation: 0
 					}}
 					cellBorderWidth={2}
+					cellHoverOthersOpacity={1}
+					cellOpacity={1}
 				/>
 			) : (
 				<div className="noTissue">Please Select Any Tissue</div>
