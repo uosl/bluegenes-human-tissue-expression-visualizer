@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Heatmap from './components/Heatmap';
-import { queryData, illuminaDataQuery, gTexDataQuery } from './queries';
+import {
+	queryData,
+	illuminaDataQuery,
+	RNASeqQuery,
+	gTexDataQuery
+} from './queries';
 import FilterPanel from './components/FilterPanel';
 
 const RootContainer = ({ serviceUrl, entity }) => {
@@ -27,7 +32,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		let { value } = entity;
 		queryData({
 			// conditionally querying data based on the selected dataset
-			query: selectedDataSet == 'GTex Data' ? gTexDataQuery : illuminaDataQuery,
+			query: getQuery(),
 			serviceUrl: serviceUrl,
 			geneId: !Array.isArray(value) ? [value] : value
 		}).then(data => {
@@ -84,6 +89,12 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		formatDataAccToSelectedLevel();
 	}, [dataAccToLevel, selectedExpression, selectedScale]);
 
+	const getQuery = () => {
+		if (selectedDataSet === 'GTex Data') return gTexDataQuery;
+		if (selectedDataSet === 'illumina Body Map') return illuminaDataQuery;
+		return RNASeqQuery;
+	};
+
 	const checkLevel = (level, val) => {
 		if (level == 'Low') return val <= 10;
 		if (level == 'Medium') return val > 10 && val <= 1000;
@@ -99,15 +110,11 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		});
 	};
 
-	const checkDataset = () => {
-		return selectedDataSet === 'illumina Body Map'
-			? 'GTex Data'
-			: 'illumina Body Map';
-	};
-
-	const getValAccToDataset = () => {
-		return selectedDataSet === 'illumina Body Map' ? 100 : 200;
-	};
+	const getValAccToDataset = () =>
+		selectedDataSet === 'illumina Body Map' ||
+		selectedDataSet === 'RNA Seq Data'
+			? 100
+			: 200;
 
 	const formatDataAccToSelectedLevel = () => {
 		// merge the data of those level whose value is true and is selected tissue in the filter panel
@@ -170,7 +177,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								scaleFilter={e => changeScale(e.target.value)}
 								filterTissue={() => setHeatmapTissueList(selectedTissue)}
 								selectedDataSet={selectedDataSet}
-								filterDataSet={() => changeDataSet(checkDataset())}
+								filterDataSet={e => changeDataSet(e.target.value)}
 							/>
 						</div>
 					)}
