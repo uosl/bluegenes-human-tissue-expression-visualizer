@@ -3,7 +3,7 @@ import Dropdown from './Dropdown';
 
 const FilterPanel = ({
 	tissueList,
-	filterGraph,
+	filterTissue,
 	updateFilter,
 	expressionLevelFilter,
 	selectedExpression,
@@ -18,7 +18,11 @@ const FilterPanel = ({
 					<div className="tissue-filter">
 						Tissues
 						<div className="dropdown">
-							<Dropdown options={tissueList} updateFilter={updateFilter} />
+							<Dropdown
+								options={tissueList}
+								updateFilter={updateFilter}
+								filterTissue={filterTissue}
+							/>
 						</div>
 					</div>
 					<div className="expression-filter">
@@ -70,11 +74,6 @@ const FilterPanel = ({
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className="button-container">
-				<button type="button" className="filter-button" onClick={filterGraph}>
-					Filter
-				</button>
 			</div>
 		</div>
 	);
