@@ -17,6 +17,12 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const expressionLevel = ['Low', 'Medium', 'High'];
 
 	useEffect(() => {
+		let levelMap = {};
+		expressionLevel.forEach(l => (levelMap = { ...levelMap, [l]: true }));
+		setSelectedExpression(levelMap);
+	}, []);
+
+	useEffect(() => {
 		setLoading(true);
 		let { value } = entity;
 		queryData({
@@ -37,8 +43,6 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		// according to its expression level - low, medium, high. Also, filtering out
 		// the tissue list that will be used passed to the filterpanel and heatmap as prop
 		Object.keys(selectedExpression).map(level => {
-			const curLevel = selectedExpression[level];
-			if (!curLevel) return;
 			const levelData = [];
 			data.forEach(d => {
 				const obj = {};
@@ -73,27 +77,17 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		setTissueList(tissueList);
 		setSelectedTissue(tissueList);
 		setHeatmapTissueList(tissueList);
-		initExpressionLevel(true);
 	}, [data]);
 
 	useEffect(() => {
 		// initially merging data of all selected expression level to send it to heatmap
 		formatDataAccToSelectedLevel();
-	}, [dataAccToLevel]);
+	}, [dataAccToLevel, selectedExpression, selectedScale]);
 
 	const checkLevel = (level, val) => {
 		if (level == 'Low') return val <= 10;
 		if (level == 'Medium') return val > 10 && val <= 1000;
 		if (level == 'High') return val > 1000;
-	};
-
-	const initExpressionLevel = (checkedValue = true) => {
-		// created a map to store the state of all expression levels as checked
-		let levelMap = {};
-		expressionLevel.forEach(
-			l => (levelMap = { ...levelMap, [l]: checkedValue })
-		);
-		setSelectedExpression(levelMap);
 	};
 
 	const expressionLevelFilter = e => {
@@ -142,11 +136,6 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		setHeatmapData([...Object.values(obj)]);
 	};
 
-	const filterGraph = () => {
-		setHeatmapTissueList(selectedTissue);
-		formatDataAccToSelectedLevel();
-	};
-
 	return (
 		<div className="rootContainer">
 			<div className="innerContainer">
@@ -180,12 +169,12 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							)}
 							<FilterPanel
 								tissueList={tissueList}
-								filterGraph={filterGraph}
 								updateFilter={value => setSelectedTissue(value)}
 								selectedExpression={selectedExpression}
 								expressionLevelFilter={expressionLevelFilter}
 								selectedScale={selectedScale}
 								scaleFilter={e => changeScale(e.target.value)}
+								filterTissue={() => setHeatmapTissueList(selectedTissue)}
 							/>
 						</div>
 					)}
