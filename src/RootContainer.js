@@ -149,12 +149,6 @@ const RootContainer = ({ serviceUrl, entity }) => {
 							<span className="chart-title">
 								Gene Tissue Expression ({selectedDataSet})
 							</span>
-							<div
-								className="tabs"
-								onClick={() => changeDataSet(checkDataset())}
-							>
-								{checkDataset()}
-							</div>
 							{heatmapData.length ? (
 								<Heatmap
 									tissueList={heatmapTissueList}
@@ -175,6 +169,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								selectedScale={selectedScale}
 								scaleFilter={e => changeScale(e.target.value)}
 								filterTissue={() => setHeatmapTissueList(selectedTissue)}
+								selectedDataSet={selectedDataSet}
+								filterDataSet={() => changeDataSet(checkDataset())}
 							/>
 						</div>
 					)}

@@ -47,7 +47,8 @@
         }
 
         .filter-panel-root {
-          margin: 0 110px 100px 110px;
+          width: 60%;
+          margin: auto;
           text-align: center;
           border: solid 1px black;
           border-radius: 4px;
@@ -69,14 +70,45 @@
               font-weight: 300;
               font-family: sans-serif;
               .tissue-filter {
-                width: 45%;
+                width: 25rem;
                 margin-right: 50px;
                 .dropdown {
                   margin: 10px 0 0 0;
                 }
               }
               .expression-filter {
-                width: 25%;
+                width: calc(60% - 10rem);
+                .filter-option {
+                  display: flex;
+                  justify-content: space-between;
+                  padding-top: 10px;
+                  font-size: 16px;
+                  font-family: arial;
+
+                  .option {
+                      padding: 8px 15px;
+                      cursor: pointer;
+                  }
+                  .selected {
+                      border: 1.2px solid rgb(85, 137, 233);
+                      border-radius: 3px;
+                      background: rgb(85, 137, 233);
+                      color: white;
+                  }
+                  .not-selected {
+                    border: 1.2px solid rgb(85, 137, 233);
+                    border-radius: 3px;
+                  }
+                  input {
+                      display: none;
+                  }
+                  label {
+                      cursor: pointer;
+                  }
+                }
+              }
+              .data-set-filter {
+                width: 25rem;
                 margin-right: 50px;
                 .filter-option {
                   display: flex;
@@ -108,7 +140,7 @@
                 }
               }
               .scale-filter {
-                width: 25%;
+                width: calc(60% - 10rem);;
                 .filter-option {
                   display: flex;
                   justify-content: space-between;
@@ -138,6 +170,9 @@
                   }
                 }
               }
+            }
+            .top {
+              margin-top: 20px
             }
           }
           .button-container {

@@ -8,7 +8,9 @@ const FilterPanel = ({
 	expressionLevelFilter,
 	selectedExpression,
 	selectedScale,
-	scaleFilter
+	scaleFilter,
+	selectedDataSet,
+	filterDataSet
 }) => {
 	return (
 		<div className="filter-panel-root">
@@ -43,6 +45,32 @@ const FilterPanel = ({
 										value={term}
 										onChange={expressionLevelFilter}
 										checked={selectedExpression[term]}
+									/>
+									<label htmlFor={term}>{term}</label>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+				<div className="filter-container top">
+					<div className="data-set-filter">
+						Data Set
+						<div className="filter-option">
+							{['GTex Data', 'illumina Body Map'].map(term => (
+								<div
+									className={
+										selectedDataSet == term
+											? 'option selected'
+											: 'option not-selected'
+									}
+									key={term}
+								>
+									<input
+										type="checkbox"
+										id={term}
+										value={term}
+										onChange={filterDataSet}
+										checked={selectedDataSet == term}
 									/>
 									<label htmlFor={term}>{term}</label>
 								</div>
