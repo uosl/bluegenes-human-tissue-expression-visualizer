@@ -37,7 +37,9 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 						tickPadding: 5,
 						tickRotation: 0
 					}}
-					cellBorderWidth={2}
+					cellBorderWidth={1}
+					cellBorderColor="rgb(51, 51, 51)"
+					labelTextColor="rgb(51, 51, 51)"
 					cellHoverOthersOpacity={1}
 					cellOpacity={1}
 				/>
