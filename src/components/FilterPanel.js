@@ -28,7 +28,7 @@ const FilterPanel = ({
 						</div>
 					</div>
 					<div className="expression-filter">
-						Expression score
+						Expression Level
 						<div className="filter-option">
 							{Object.keys(selectedExpression).map(term => (
 								<div

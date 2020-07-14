@@ -113,8 +113,8 @@ const RootContainer = ({ serviceUrl, entity }) => {
 	const getValAccToDataset = () =>
 		selectedDataSet === 'illumina Body Map' ||
 		selectedDataSet === 'RNA Seq Data'
-			? 100
-			: 200;
+			? 150
+			: 250;
 
 	const formatDataAccToSelectedLevel = () => {
 		// merge the data of those level whose value is true and is selected tissue in the filter panel
@@ -157,12 +157,14 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								Gene Tissue Expression ({selectedDataSet})
 							</span>
 							{heatmapData.length ? (
-								<Heatmap
-									tissueList={heatmapTissueList}
-									graphData={heatmapData}
-									labelHeight={getValAccToDataset()}
-									graphHeight={heatmapData.length * 100 + getValAccToDataset()}
-								/>
+								<div className="graph-container">
+									<Heatmap
+										tissueList={heatmapTissueList}
+										graphData={heatmapData}
+										labelHeight={getValAccToDataset()}
+										graphHeight={heatmapData.length * 60 + getValAccToDataset()}
+									/>
+								</div>
 							) : (
 								<div className="noTissue">
 									Data Not Found! Please Update The Filter.
