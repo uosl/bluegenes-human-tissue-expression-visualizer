@@ -19,7 +19,7 @@ const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 					keys={tissueList.map(t => t.value)}
 					colors={heatmap_colors}
 					indexBy="Gene"
-					margin={{ top: labelHeight, right: 60, bottom: 0, left: 60 }}
+					margin={{ top: labelHeight, right: 60, bottom: 0, left: 80 }}
 					forceSquare={true}
 					axisTop={{
 						orient: 'top',
