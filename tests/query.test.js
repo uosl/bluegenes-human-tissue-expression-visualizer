@@ -8,7 +8,7 @@ import {
 
 describe('query', () => {
 	const mockData = {
-		entity: [5468, 128, 2314],
+		entity: [1215734, 1161508, 1020855],
 		service: 'https://www.humanmine.org/humanmine'
 	};
 
