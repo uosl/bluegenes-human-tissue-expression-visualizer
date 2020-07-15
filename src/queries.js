@@ -22,9 +22,9 @@ const illuminaDataQuery = geneId => ({
 			code: 'A'
 		},
 		{
-			path: 'Gene',
-			op: 'LOOKUP',
-			value: geneId,
+			path: 'Gene.id',
+			op: 'ONE OF',
+			values: geneId,
 			extraValue: '',
 			code: 'B'
 		}
@@ -48,9 +48,9 @@ const gTexDataQuery = geneId => ({
 	],
 	where: [
 		{
-			path: 'Gene',
-			op: 'LOOKUP',
-			value: geneId,
+			path: 'Gene.id',
+			op: 'ONE OF',
+			values: geneId,
 			extraValue: 'H. sapiens',
 			code: 'A'
 		}
@@ -75,10 +75,10 @@ const RNASeqQuery = geneId => ({
 			value: 'Protein Atlas RNA Gene data'
 		},
 		{
-			path: 'Gene',
+			path: 'Gene.id',
 			code: 'A',
-			op: 'LOOKUP',
-			value: geneId,
+			op: 'ONE OF',
+			values: geneId,
 			extraValue: 'H. sapiens'
 		}
 	]
