@@ -133,7 +133,7 @@ const RootContainer = ({ serviceUrl, entity }) => {
 								obj[data.Gene] = {
 									...obj[data.Gene],
 									[tissue]:
-										data[tissue] == 0 ? 0 : Math.log10(data[tissue]).toFixed(2)
+										data[tissue] < 1 ? 0 : Math.log10(data[tissue]).toFixed(2)
 								};
 							} else
 								obj[data.Gene] = { ...obj[data.Gene], [tissue]: data[tissue] };
