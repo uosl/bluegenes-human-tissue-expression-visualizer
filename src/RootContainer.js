@@ -149,68 +149,66 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		<div className="rootContainer">
 			<div className="innerContainer">
 				<div className="graph">
-					{loading ? (
-						<h1>Loading...</h1>
-					) : (
-						<div
-							style={{ width: !heatmapData.length ? 'calc(100vw - 5rem)' : '' }}
-						>
-							<span className="chart-title">
-								Gene Tissue Expression ({selectedDataSet})
-							</span>
-							{heatmapData.length ? (
-								<div className="graph-container">
-									<Heatmap
-										tissueList={heatmapTissueList}
-										graphData={heatmapData}
-										labelHeight={getValAccToDataset()}
-										graphHeight={heatmapData.length * 60 + getValAccToDataset()}
-									/>
-								</div>
-							) : (
-								<div className="noTissue">
-									Data Not Found! Please Update The Filter.
-								</div>
-							)}
-							<div className="lower-container">
-								<FilterPanel
-									tissueList={tissueList}
-									updateFilter={value => setSelectedTissue(value)}
-									selectedExpression={selectedExpression}
-									expressionLevelFilter={expressionLevelFilter}
-									selectedScale={selectedScale}
-									scaleFilter={e => changeScale(e.target.value)}
-									filterTissue={() => setHeatmapTissueList(selectedTissue)}
-									selectedDataSet={selectedDataSet}
-									filterDataSet={e => changeDataSet(e.target.value)}
+					<span className="chart-title">
+						Gene Tissue Expression{' '}
+						{selectedDataSet.length && `- ${selectedDataSet}`}
+					</span>
+					{loading ? <div className="loading"></div> : <></>}
+					<div
+						style={{ width: !heatmapData.length ? 'calc(100vw - 5rem)' : '' }}
+					>
+						{heatmapData.length ? (
+							<div className="graph-container">
+								<Heatmap
+									tissueList={heatmapTissueList}
+									graphData={heatmapData}
+									labelHeight={getValAccToDataset()}
+									graphHeight={heatmapData.length * 60 + getValAccToDataset()}
 								/>
-								{heatmapData.length ? (
-									<div className="legend">
-										<div className="legend-options">
-											<div className="legend-title">Expression Level</div>
-										</div>
-										<div className="legend-options">
-											<div style={{ position: 'relative', top: 25, right: 10 }}>
-												Low
-											</div>
-										</div>
-										<div className="legend-options">
-											<div style={{ position: 'relative', top: 25, left: 80 }}>
-												Medium
-											</div>
-										</div>
-										<div className="legend-options">
-											<div style={{ position: 'relative', top: 25, left: 180 }}>
-												High
-											</div>
+							</div>
+						) : (
+							<div className="noTissue">
+								Data Not Found! Please Update The Filter.
+							</div>
+						)}
+						<div className="lower-container">
+							<FilterPanel
+								tissueList={tissueList}
+								updateFilter={value => setSelectedTissue(value)}
+								selectedExpression={selectedExpression}
+								expressionLevelFilter={expressionLevelFilter}
+								selectedScale={selectedScale}
+								scaleFilter={e => changeScale(e.target.value)}
+								filterTissue={() => setHeatmapTissueList(selectedTissue)}
+								selectedDataSet={selectedDataSet}
+								filterDataSet={e => changeDataSet(e.target.value)}
+							/>
+							{heatmapData.length ? (
+								<div className="legend">
+									<div className="legend-options">
+										<div className="legend-title">Expression Level</div>
+									</div>
+									<div className="legend-options">
+										<div style={{ position: 'relative', top: 25, right: 10 }}>
+											Low
 										</div>
 									</div>
-								) : (
-									<></>
-								)}
-							</div>
+									<div className="legend-options">
+										<div style={{ position: 'relative', top: 25, left: 80 }}>
+											Medium
+										</div>
+									</div>
+									<div className="legend-options">
+										<div style={{ position: 'relative', top: 25, left: 180 }}>
+											High
+										</div>
+									</div>
+								</div>
+							) : (
+								<></>
+							)}
 						</div>
-					)}
+					</div>
 				</div>
 			</div>
 		</div>
