@@ -7,6 +7,7 @@ import {
 	gTexDataQuery
 } from './queries';
 import FilterPanel from './components/FilterPanel';
+import Loading from './components/Loading';
 
 const RootContainer = ({ serviceUrl, entity }) => {
 	const [data, setData] = useState([]);
@@ -153,7 +154,13 @@ const RootContainer = ({ serviceUrl, entity }) => {
 						Gene Tissue Expression{' '}
 						{selectedDataSet.length && `- ${selectedDataSet}`}
 					</span>
-					{loading ? <div className="loading"></div> : <></>}
+					{loading ? (
+						<div className="loading">
+							<Loading />
+						</div>
+					) : (
+						<></>
+					)}
 					<div
 						style={{ width: !heatmapData.length ? 'calc(100vw - 5rem)' : '' }}
 					>
