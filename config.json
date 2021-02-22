@@ -9,12 +9,13 @@
       "id": "primaryAccession"
     }
   },
+  "depends": ["AtlasExpression", "RNASeqResult"],
   "files" : {
     "css" : "dist/style.css",
     "js" : "dist/bundle.js"
   },
   "toolName" : {
-    "human" :"Bluegenes Human Tissue Expression Visualizer",
+    "human" :"Human Tissue Expression Visualizer",
     "cljs" :"bluegenesHumanTissueExpressionVisualizer"    
   },
   "version": 2

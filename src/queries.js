@@ -67,6 +67,12 @@ const RNASeqQuery = geneId => ({
 		'rnaSeqResults.expressionScore',
 		'rnaSeqResults.dataSets.name'
 	],
+	orderBy: [
+		{
+			path: 'rnaSeqResults.tissue',
+			direction: 'ASC'
+		}
+	],
 	where: [
 		{
 			path: 'Gene.rnaSeqResults.dataSets.name',
