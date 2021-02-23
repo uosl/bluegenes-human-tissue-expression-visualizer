@@ -150,7 +150,6 @@ const RootContainer = ({ serviceUrl, entity }) => {
 		<div className="rootContainer">
 			<div className="innerContainer">
 				<div className="graph">
-					{loading && <Loading />}
 					<FilterPanel
 						tissueList={tissueList}
 						updateFilter={value => setSelectedTissue(value)}
@@ -162,15 +161,15 @@ const RootContainer = ({ serviceUrl, entity }) => {
 						selectedDataSet={selectedDataSet}
 						filterDataSet={e => changeDataSet(e.target.value)}
 					/>
-					{heatmapData.length ? (
-						<div className="graph-container">
-							<Heatmap
-								tissueList={heatmapTissueList}
-								graphData={heatmapData}
-								labelHeight={getValAccToDataset()}
-								graphHeight={heatmapData.length * 50 + getValAccToDataset()}
-							/>
-						</div>
+					{heatmapData.length && heatmapTissueList.length ? (
+						<Heatmap
+							tissueList={heatmapTissueList}
+							graphData={heatmapData}
+							labelHeight={getValAccToDataset()}
+							graphHeight={heatmapData.length * 50 + getValAccToDataset()}
+						/>
+					) : loading ? (
+						<Loading />
 					) : (
 						<h4>No results</h4>
 					)}

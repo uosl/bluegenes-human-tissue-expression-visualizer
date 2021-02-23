@@ -4,11 +4,7 @@ const heatmap_colors = ['#edf8e9', '#bae4b3', '#74c476', '#238b45'];
 
 const Heatmap = ({ graphData, tissueList, labelHeight, graphHeight }) => {
 	return (
-		<div
-			style={{
-				height: graphHeight
-			}}
-		>
+		<div className="graph-container">
 			<HeatMap
 				animate={false}
 				data={graphData}
