@@ -28,7 +28,7 @@ const FilterPanel = ({
 				Expression Level
 				<div className="filter-option">
 					{Object.keys(selectedExpression).map(term => (
-						<label htmlFor={term} key={term}>
+						<label key={term}>
 							<div
 								className={
 									selectedExpression[term]
@@ -38,7 +38,6 @@ const FilterPanel = ({
 							>
 								<input
 									type="checkbox"
-									id={term}
 									value={term}
 									onChange={expressionLevelFilter}
 									checked={selectedExpression[term]}
@@ -54,7 +53,7 @@ const FilterPanel = ({
 				Data Set
 				<div className="filter-option">
 					{['GTex Data', 'RNA Seq Data', 'illumina Body Map'].map(term => (
-						<label htmlFor={term} key={term}>
+						<label key={term}>
 							<div
 								className={
 									selectedDataSet == term
@@ -64,7 +63,6 @@ const FilterPanel = ({
 							>
 								<input
 									type="checkbox"
-									id={term}
 									value={term}
 									onChange={filterDataSet}
 									checked={selectedDataSet == term}
@@ -79,7 +77,7 @@ const FilterPanel = ({
 				Scale
 				<div className="filter-option">
 					{['Linear Scale', 'Logarithmic Scale'].map(term => (
-						<label htmlFor={term} key={term}>
+						<label key={term}>
 							<div
 								className={
 									selectedScale === term
@@ -89,7 +87,6 @@ const FilterPanel = ({
 							>
 								<input
 									type="radio"
-									id={term}
 									value={term}
 									onChange={scaleFilter}
 									checked={selectedScale === term}
